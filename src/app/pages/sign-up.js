@@ -3,12 +3,14 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { url } from "../../../environment/environment";
 import { NavLink } from "react-router-dom";
+import { toekn } from "../../../vars";
 
 export default function SignUp() {
-  console.log("something", url);
+  const [interests, setInterests] = useState([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [selectedInterest, setSelectedInterest] = useState("");
 
   const router = useRouter();
   const handleSubmit = useCallback((e) => {
@@ -18,8 +20,19 @@ export default function SignUp() {
       name,
       email,
       password,
+      interestId: selectedInterest,
     };
-    if (name && email && password)
+    const authorization = token;
+
+    fetch(`${url}/interests`, {
+      method: "GET",
+      headers: { authorization },
+    }).then(async (res) => {
+      if (res.ok) {
+        setInterests(await res.json());
+      }
+    });
+    if (name && email && password && selectedInterest)
       fetch(`${url}/users/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,6 +60,11 @@ export default function SignUp() {
     setName(event.target.value);
     console.log(name);
   };
+
+  const handleInterestChange = (event) => {
+    setSelectedInterest(event.target.value);
+  };
+
   useEffect(() => {
     router.prefetch("/home-page");
   }, [router]);
@@ -136,7 +154,14 @@ export default function SignUp() {
                 onChange={handleEmailChange}
               />
             </div>
-
+            <div className="formField">
+              <select className="interest" value={selectedInterest} onChange={handleInterestChange}>
+                <option value="">SELECT AN INTEREST</option>
+                {interests.map(({ id, name }) => {
+                  <option value="{id}">{name}</option>;
+                })}
+              </select>
+            </div>
             <div className="formField">
               <button type="submit" className="formFieldButton">
                 Sign Up

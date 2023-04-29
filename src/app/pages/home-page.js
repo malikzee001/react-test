@@ -20,9 +20,9 @@ import {
 } from "react-icons/bi";
 import { FaSearch, FaStar, FaShare, FaExclamationCircle } from "react-icons/fa";
 import { useState } from "react";
-import { vars } from "../../../vars";
+import { token } from "../../../vars";
 
-const FeedCard = ({ data: { title, subTitle, content, createdAt } }) => {
+const FeedCard = ({ data: { title, subTitle, content, createdAt, interest: { name } } }) => {
   return (
     <Card className="shadow p-3">
       <div className="d-flex justify-content-between pb-3">
@@ -37,7 +37,7 @@ const FeedCard = ({ data: { title, subTitle, content, createdAt } }) => {
           <div className="d-flex feed-card-icon-gap">
             <FaStar /> <BiMessage /> <FaShare /> <FaExclamationCircle />
           </div>
-          <div>Lorem ipsum dolor</div>
+          <div>Interest: {name}</div>
         </div>
       </Card.Body>
     </Card>
@@ -181,7 +181,7 @@ const Ads = () => {
 
 export default function HomePage() {
   const [posts, setPosts] = new useState([]);
-  const authorization = vars.token;
+  const authorization = token;
 
   fetch(`${url}/posts`, {
     method: "GET",
